@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
                 float percent = (float) myPercent(viewHeight + ViewHelper.getY(textView), viewHeight);
                 adapter.setPercent(percent, firstVisiblePosition, lastVisiblePosition);
+                Log.d("Rainbow", "percent : " + percent);
 
             }
         });

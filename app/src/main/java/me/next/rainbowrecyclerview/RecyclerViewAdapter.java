@@ -46,7 +46,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         holder.textView.setText(dataSet[position]);
         if (position >= startPosition && position <= endPosition) {
-            holder.textView.setTextColor(interpCircleColor(colors, percent, position));
+            holder.textView.setTextColor(interpCircleColor(colors, percent, position - startPosition));
         }
 //        recyclerView.getLayoutManager().getDecoratedTop(recyclerView.getChildAt(position));
 //        Log.d("RainbowDemo", "item y : " + ViewHelper.getY(recyclerView.getLayoutManager().findViewByPosition(position)));
@@ -76,6 +76,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
 
         int i = position % (colors.length - 1);
+
         int c0 = colors[i];
         int c1 = colors[i + 1];
         int a = ave(Color.alpha(c0), Color.alpha(c1), unit);
