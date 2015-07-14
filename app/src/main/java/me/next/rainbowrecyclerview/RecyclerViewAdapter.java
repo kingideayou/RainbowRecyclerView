@@ -7,15 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.nineoldandroids.view.ViewHelper;
 
 /**
  * Created by NeXT on 15/7/13.
  */
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
+    private float percent;
     private String[] dataSet;
     private RecyclerView recyclerView;
+    private int startPosition;
+    private int endPosition;
+
     private int[] colors = new int[] { 0xFFFF0000, 0xFFFF00FF, 0xFF0000FF, 0xFF00FFFF, 0xFF00FF00, 0xFFFFFF00, 0xFFFF0000 };
 
     public RecyclerViewAdapter(String[] dataSet, RecyclerView recyclerView) {
@@ -40,8 +43,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+
         holder.textView.setText(dataSet[position]);
-        Log.d("RainbowDemo", "item y : " + ViewHelper.getY(holder.textView));
+        if (position >= startPosition && position <= endPosition) {
+            holder.textView.setTextColor(interpCircleColor(colors, percent, position));
+        }
+//        recyclerView.getLayoutManager().getDecoratedTop(recyclerView.getChildAt(position));
+//        Log.d("RainbowDemo", "item y : " + ViewHelper.getY(recyclerView.getLayoutManager().findViewByPosition(position)));
     }
 
     @Override
@@ -59,7 +67,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
-    private int interpCircleColor(int colors[], float unit) {
+    private int interpCircleColor(int colors[], float unit, int position) {
         if (unit <= 0) {
             return colors[0];
         }
@@ -67,22 +75,25 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             return colors[colors.length - 1];
         }
 
-        float p = unit * (colors.length - 1);
-        int i = (int) p;
-        p -= i;
-
-        // now p is just the fractional part [0...1) and i is the index
+        int i = position % (colors.length - 1);
         int c0 = colors[i];
         int c1 = colors[i + 1];
-        int a = ave(Color.alpha(c0), Color.alpha(c1), p);
-        int r = ave(Color.red(c0), Color.red(c1), p);
-        int g = ave(Color.green(c0), Color.green(c1), p);
-        int b = ave(Color.blue(c0), Color.blue(c1), p);
+        int a = ave(Color.alpha(c0), Color.alpha(c1), unit);
+        int r = ave(Color.red(c0), Color.red(c1), unit);
+        int g = ave(Color.green(c0), Color.green(c1), unit);
+        int b = ave(Color.blue(c0), Color.blue(c1), unit);
 
         return Color.argb(a, r, g, b);
     }
 
     private int ave(int s, int d, float p) {
         return s + Math.round(p * (d - s));
+    }
+
+    public void setPercent(float percent, int startPosition, int endPosition) {
+        this.startPosition = startPosition;
+        this.endPosition = endPosition;
+        this.percent = percent;
+        notifyDataSetChanged();
     }
 }
